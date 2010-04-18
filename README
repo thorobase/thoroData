@@ -1,0 +1,15 @@
+thoroData is the base module of the thorobase API.
+
+The single global namespace 'thorobase' is defined here, as well as the 'thorobase.thorodata' namespace that incorporates all of the Model objects for encapsulating horse racing data. A helper Object.create function is also defined for older browser that do not support the Object.create prototypal inheritance design.
+
+thorobase.thorodata.Provider acts as an interface to data supplier-specific parsing implementations of their respective file formats.
+
+thorobase.thorodata.Meet
+
+thorobase.thorodata.RaceCard
+
+thorobase.thorodata.Race
+
+thorobase.thorodata.Performance
+
+thorobase.Equibase
