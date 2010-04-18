@@ -1,0 +1,429 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>thoroData Tests</title>
+	<meta name="generator" content="TextMate http://macromates.com/">
+	<meta name="author" content="Robin Howlett">
+
+	<style type="text/css">
+	
+		/* margin and padding on body element can introduce errors in determining
+		 * element position and are not recommended; we turn them off as a foundation for YUI
+		 * CSS treatments.
+		 */
+		body {
+			margin:0;
+			padding:0;
+		}
+		
+	</style>
+	
+	<!-- YUI 3.1.0 -->
+	<!-- YUI CSS -->
+	<link rel="stylesheet" type="text/css" href="../util/yui/cssfonts/fonts-min.css" /> 
+	<link rel="stylesheet" type="text/css" href="../util/yui/widget/assets/skins/sam/widget.css">
+	<link rel="stylesheet" type="text/css" href="../util/yui/console/assets/skins/sam/console.css">
+	<link rel="stylesheet" type="text/css" href="../util/yui/test/assets/skins/sam/test.css">
+	<!-- YUI JS -->
+	<script type="text/javascript" src="../util/yui/yui/yui-base-min.js"></script>
+	<script type="text/javascript" src="../util/yui/oop/oop-min.js"></script>
+	<script type="text/javascript" src="../util/yui/yui/yui-later-min.js"></script>
+	<script type="text/javascript" src="../util/yui/event-custom/event-custom-min.js"></script>
+	<script type="text/javascript" src="../util/yui/event/event-base-min.js"></script>
+	<script type="text/javascript" src="../util/yui/pluginhost/pluginhost-min.js"></script>
+	<script type="text/javascript" src="../util/yui/dom/dom-min.js"></script>
+	<script type="text/javascript" src="../util/yui/node/node-min.js"></script>
+	<script type="text/javascript" src="../util/yui/event/event-delegate-min.js"></script>
+	<script type="text/javascript" src="../util/yui/intl/intl-min.js"></script>
+	<script type="text/javascript" src="../util/yui/console/lang/console.js"></script>
+	<script type="text/javascript" src="../util/yui/yui/yui-log-min.js"></script>
+	<script type="text/javascript" src="../util/yui/attribute/attribute-min.js"></script>
+	<script type="text/javascript" src="../util/yui/event/event-focus-min.js"></script>
+	<script type="text/javascript" src="../util/yui/base/base-min.js"></script>
+	<script type="text/javascript" src="../util/yui/classnamemanager/classnamemanager-min.js"></script>
+	<script type="text/javascript" src="../util/yui/widget/widget-min.js"></script>
+	<script type="text/javascript" src="../util/yui/dump/dump-min.js"></script>
+	<script type="text/javascript" src="../util/yui/substitute/substitute-min.js"></script>
+	<script type="text/javascript" src="../util/yui/console/console-min.js"></script>
+	<script type="text/javascript" src="../util/yui/json/json-min.js"></script>
+	<script type="text/javascript" src="../util/yui/event-simulate/event-simulate-min.js"></script>
+	<script type="text/javascript" src="../util/yui/test/test-min.js"></script>
+	
+	<!-- auto-loads the Google AJAX API, the Google Visualization API, and the Motion Chart package -->
+	<script type="text/javascript" src="../util/google/jsapi.js"></script>
+	
+	<!-- import provider scripts and sample data -->
+	<script type="text/javascript" src="../src/thoroData.js"></script>
+	<script type="text/javascript" src="../src/providers/brisImportChartData.js"></script>
+	<script type="text/javascript" src="sample_brisImportChartData_racedata.js"></script>
+	<script type="text/javascript" src="sample_fusionTableThoroData.js"></script>
+	
+	<!--begin custom header content for this example--> 
+	<style type="text/css"> 
+		#testLogger {
+		    margin-bottom: 1em;
+		}
+
+		#testLogger .yui3-console .yui3-console-title {
+		    border: 0 none;
+		    color: #000;
+		    font-size: 13px;
+		    font-weight: bold;
+		    margin: 0;
+		    text-transform: none;
+		}
+		#testLogger .yui3-console .yui3-console-entry-meta {
+		    margin: 0;
+		}
+
+		.yui3-skin-sam .yui3-console-entry-pass .yui3-console-entry-cat {
+		    background: #070;
+		    color: #fff;
+		}
+	</style> 
+
+	<!--end custom header content for this example-->
+</head>
+<body class="yui3-skin-sam  yui-skin-sam">
+	
+	<!--BEGIN SOURCE CODE FOR EXAMPLE =============================== --> 
+	
+	<div id="testLogger"></div>
+	
+	<script type="text/javascript">
+		var Y;
+		
+		Y = YUI({ debug: true });
+
+		// Create new YUI instance, and populate it with the required modules
+		Y.use("node", "console", "test", function(Y) {
+		
+			Y.namespace("thorobase.thorodata.test");
+		
+			Y.thorobase.thorodata.test.BRISImportChartDataTestCase = new Y.Test.Case({
+			
+				// name of the test case
+				name: "BRISImportChartData Tests",
+			
+				//---------------------------------------------------------------------
+		        // setUp and tearDown methods
+		        //---------------------------------------------------------------------
+	
+				/*
+		         * Sets up data that is needed by each test.
+		         */
+		        setUp: function () {
+		            this.data = new google.visualization.DataTable(brisImportChartDataSample, 0.6);
+		        },
+	
+		        /*
+		         * Cleans up everything that was created by setUp().
+		         */
+		        tearDown: function () {
+		            delete this.data;
+		        },
+			
+				//---------------------------------------------------------------------
+		        // Test methods
+		        //---------------------------------------------------------------------
+	
+				testParseRaceCards: function () {
+		            var Assert = Y.Assert, bris, raceCards, raceCard;
+	
+					bris = Object.create(thorobase.thorodata.BRISImportChartData);
+				
+					raceCards = bris.parseRaceCards(this.data);
+				
+					Assert.isObject(raceCards, "raceCards should be an Object");
+					Assert.isArray(raceCards, "raceCards should be an Array");
+					Assert.areEqual(1, raceCards.length, "raceCards should be an array of length = 1");
+				
+					raceCard = raceCards[0];
+				
+					Assert.isString(raceCard.track, "raceCard.track should be a String");
+					Assert.areEqual("CD ", raceCard.track, "raceCard.track should be 'CD '");
+					
+					Assert.isString(raceCard.raceDate.year, "raceCard.raceDate.year should be a String");
+					Assert.areEqual("2000", raceCard.raceDate.year, "raceCard.raceDate.year should be '2000'");
+					
+					Assert.isString(raceCard.raceDate.month, "raceCard.raceDate.month should be a String");
+					Assert.areEqual("11", raceCard.raceDate.month, "raceCard.raceDate.month should be '11'");
+					
+					Assert.isString(raceCard.raceDate.day, "raceCard.raceDate.day should be a String");
+					Assert.areEqual("25", raceCard.raceDate.day, "raceCard.raceDate.day should be '25'");
+					
+					Assert.isFunction(raceCard.getRaceDateCYMD, "raceCard.getRaceDateCYMD should be a function");
+					Assert.isNumber(raceCard.getRaceDateCYMD(), "raceCard.getRaceDateCYMD() should return a Number");
+					Assert.areEqual(20001125, raceCard.getRaceDateCYMD(), "raceCard.getRaceDateCYMD() should return 20001125");
+					
+					Assert.isArray(raceCard.races, "raceCard.races should be an initialized Array")
+					Assert.areEqual(0, raceCard.races.length, "raceCard.races should be empty");
+		        },
+		
+				testParseRaces: function () {
+					var Assert = Y.Assert, bris, raceCard, races, race0, race1, race2, race3, race4;
+					
+					bris = Object.create(thorobase.thorodata.BRISImportChartData);				
+					raceCard = bris.parseRaceCards(this.data)[0];
+					
+					races = bris.parseRaces(this.data, raceCard);
+					
+					Assert.isArray(races, "races should be an Array");
+					Assert.areEqual(12, races.length, "races.length should be 12");
+					
+					race0 = races[0];
+					
+					Assert.isString(race0.raceTrack, "race0.raceTrack should be a String");
+					Assert.areEqual("CD ", race0.raceTrack, "race0.raceTrack should be 'CD '");
+					
+					Assert.isString(race0.raceRunDate.year, "race0.raceRunDate.year should be a String");
+					Assert.areEqual("2000", race0.raceRunDate.year, "race0.raceRunDate.year should be '2000'");
+					
+					Assert.isString(race0.raceRunDate.month, "race0.raceRunDate.month should be a String");
+					Assert.areEqual("11", race0.raceRunDate.month, "race0.raceRunDate.month should be '11'");
+					
+					Assert.isString(race0.raceRunDate.day, "race0.raceRunDate.day should be a String");
+					Assert.areEqual("25", race0.raceRunDate.day, "race0.raceRunDate.day should be '25'");
+					
+					Assert.isFunction(race0.getRaceRunDateCYMD, "race0.getRaceRunDateCYMD should be a function");
+					Assert.isNumber(race0.getRaceRunDateCYMD(), "race0.getRaceRunDateCYMD() should return a Number");
+					Assert.areEqual(20001125, race0.getRaceRunDateCYMD(), "race0.getRaceRunDateCYMD() should return 20001125");
+					
+					Assert.isNumber(race0.raceNumber, "race0.raceNumber should be a Number");
+					Assert.areEqual(1, race0.raceNumber, "race0.raceNumber should be 1");
+					
+					Assert.isNull(race0.raceStartTime, "race0.raceStartTime should be null");
+					
+					Assert.isObject(race0.distance, "race0.distance should be a Object");
+					Assert.areEqual("yards", race0.distance.unit, "race0.distance.unit should be 'yards'");
+					Assert.areEqual(3520, race0.distance.value, "race0.distance.value should be 3520");
+					Assert.isFalse(race0.distance.isAbout, "race0.distance.isAbout should be false");
+					
+					race1 = races[1];
+					
+					Assert.isObject(race1.surface, "race1.surface should be a Object");
+					Assert.areEqual("D", race1.surface.code, "race1.surface.code should be 'D'");
+					Assert.areEqual("SY", race1.surface.condition, "race1.surface.condition should be 'SY'");
+					Assert.areEqual("Dirt", race1.surface.desc, "race1.surface.desc should be 'Dirt'");
+					
+					Assert.isObject(race1.raceType, "race1.raceType should be a Object");
+					Assert.areEqual("Md 30000", race1.raceType.classRaceName, "race1.raceType.classRaceName should be 'Md 30000'");
+					Assert.areEqual("M", race1.raceType.code, "race1.raceType.code should be 'M'");
+					Assert.areEqual("Mdn Claiming", race1.raceType.desc, "race1.raceType.desc should be 'Mdn Claiming'");
+					
+					Assert.isObject(race1.raceGrade, "race1.raceGrade should be a Object");
+					Assert.areEqual(0, race1.raceGrade.code, "race1.raceGrade.code should be 0");
+					Assert.areEqual("Not Graded", race1.raceGrade.desc, "race1.raceGrade.desc should be 'Not Graded'");
+					
+					race2 = races[2];
+					
+					Assert.isObject(race2.purse, "race2.purse should be a Object");
+					Assert.areEqual("USD", race2.purse.unit, "race2.purse.total should be 'USD'");
+					Assert.areEqual(16500, race2.purse.total, "race2.purse.total should be 16500");
+					
+					Assert.isObject(race2.ageSexRestr, "race2.ageSexRestr should be a Object");
+					Assert.areEqual("BUN", race2.ageSexRestr.code, "race2.ageSexRestr.code should be 'BUN'");
+					Assert.isArray(race2.ageSexRestr.desc, "race2.ageSexRestr.desc should be an Array");
+					Assert.areEqual("3 year olds", race2.ageSexRestr.desc[0], "race2.ageSexRestr.desc[0] should be '3 year olds'");
+					Assert.areEqual("That age and up", race2.ageSexRestr.desc[1], "race2.ageSexRestr.desc[1] should be 'That age and up'");
+					Assert.areEqual("No sex restrictions", race2.ageSexRestr.desc[2], "race2.ageSexRestr.desc[2] should be 'No sex restrictions'");
+					Assert.areEqual("3yo+", race2.ageSexRestr.shortDesc, "race2.ageSexRestr.shortDesc should be '3yo+'");
+					
+					Assert.isBoolean(race2.isStatebred, "race2.isStatebred should be Boolean");
+					Assert.isFalse(race2.isStatebred, "race2.isStatebred should be false");
+					
+					race3 = races[3];
+					
+					Assert.isArray(race3.fractions, "race3.fractions should be an Array");
+					Assert.areEqual(4, race3.fractions.length, "race3.fractions.length should be 6");
+					Assert.isObject(race3.fractions[0], "race3.fractions[0] should be an Object");
+					Assert.areEqual(440, race3.fractions[0].pofDist, "race3.fractions[0].pofDist should be 440");
+					Assert.areEqual(22.91, race3.fractions[0].pofTime, "race3.fractions[0].pofTime should be 22.91");
+					Assert.areEqual(0, race3.fractions[0].splitStart, "race3.fractions[0].splitStart should be 0");
+					Assert.areEqual(22.91, race3.fractions[0].splitTime, "race3.fractions[0].splitTime should be 22.91");
+					Assert.areEqual(880, race3.fractions[1].pofDist, "race3.fractions[1].pofDist should be 880");
+					Assert.areEqual(46.80, race3.fractions[1].pofTime, "race3.fractions[1].pofTime should be 46.80");
+					Assert.areEqual(440, race3.fractions[1].splitStart, "race3.fractions[1].splitStart should be 0");
+					Assert.areEqual(23.89, race3.fractions[1].splitTime, "race3.fractions[1].splitTime should be 23.89");
+					Assert.areEqual(1320, race3.fractions[2].pofDist, "race3.fractions[2].pofDist should be 1320");
+					Assert.areEqual(72.70, race3.fractions[2].pofTime, "race3.fractions[2].pofTime should be 72.70");
+					Assert.areEqual(880, race3.fractions[2].splitStart, "race3.fractions[2].splitStart should be 880");
+					Assert.areEqual(25.9, race3.fractions[2].splitTime, "race3.fractions[2].splitTime should be 25.9");
+					Assert.areEqual(1430, race3.fractions[3].pofDist, "race3.fractions[3].pofDist should be 1430");
+					Assert.areEqual(79.54, race3.fractions[3].pofTime, "race3.fractions[3].pofTime should be 79.54");
+					Assert.areEqual(1320, race3.fractions[3].splitStart, "race3.fractions[3].splitStart should be 1320");
+					Assert.areEqual(6.84, race3.fractions[3].splitTime, "race3.fractions[3].splitTime should be 6.84");
+					Assert.areEqual(race3.distance.value, race3.fractions[3].pofDist, "race3.fractions[3].pofDist should be equal to race3.distance.value");
+					
+					race4 = races[4];
+					
+					Assert.isFunction(race4.winTime, "race4.winTime should be a function");
+					Assert.isNumber(race4.winTime(), "race4.winTime() should return a Number");
+					Assert.areEqual(58.19, race4.winTime(), "race4.winTime() should be 58.19");
+					
+					Assert.isFunction(race4.getRaceRunDateCYMD, "race4.getRaceRunDateCYMD should be a function");
+					Assert.isNumber(race4.getRaceRunDateCYMD(), "race4.getRaceRunDateCYMD() should return a Number");
+					Assert.areEqual(20001125, race4.getRaceRunDateCYMD(), "race4.getRaceRunDateCYMD() should be 20001125");
+					
+				},
+				
+				testParsePerformances: function () {
+					var Assert = Y.Assert, bris, raceCard, performances, perf0, perf1, perf2, perf3, perf4;
+					
+					bris = Object.create(thorobase.thorodata.BRISImportChartData);
+					raceCard = bris.parseRaceCards(this.data)[0];
+					races = bris.parseRaces(this.data, raceCard);
+
+					performances = bris.parsePerformances(this.data, races[0]);
+					
+					Assert.isArray(performances, "performances should be an Array");
+					Assert.areEqual(6, performances.length, "performances.length should be 6");
+					
+					perf0 = performances[0];
+					
+					Assert.isNumber(perf0.pp, "perf0.pp should be a Number");
+					Assert.areEqual(1, perf0.pp, "perf0.pp should be 1");
+					
+					Assert.isBoolean(perf0.isEntryCoupled, "perf0.isEntryCoupled should be a Boolean");
+					Assert.areEqual(false, perf0.isEntryCoupled, "perf0.isEntryCoupled should be false");
+					
+					Assert.isString(perf0.horseName, "perf0.horseName should be a String");
+					Assert.areEqual("IRISH CHARM", perf0.horseName, "perf0.horseName should be 'IRISH CHARM'");
+					
+					perf1 = performances[1];
+					
+					Assert.isString(perf1.countryCode, "perf1.countryCode should be a String");
+					Assert.areEqual("USA", perf1.countryCode, "perf1.countryCode should be 'USA'");
+					
+					Assert.isNumber(perf1.yearOfBirth, "perf1.yearOfBirth should be a Number");
+					Assert.areEqual(96, perf1.yearOfBirth, "perf1.yearOfBirth should be 95");
+					
+					Assert.isNumber(perf1.weight, "perf1.weight should be a Number");
+					Assert.areEqual(112, perf1.weight, "perf1.weight should be 105");
+					
+					perf2 = performances[2];
+					
+					Assert.isNumber(perf2.claimingPrice, "perf2.claimingPrice should be a Number");
+					Assert.areEqual(0, perf2.claimingPrice, "perf2.claimingPrice should be 0");
+					
+					Assert.isArray(perf2.callPositions, "perf2.callPositions should be an Array");
+					Assert.areEqual(6, perf2.callPositions.length, "perf2.callPositions.length should be 6");
+					Assert.isObject(perf2.callPositions[0], "perf2.callPositions[0] should be an Object");
+					Assert.areEqual(880, perf2.callPositions[0].pocDist, "perf2.callPositions[0].pocDist should be 880");
+					Assert.areEqual(1, perf2.callPositions[0].pocPos, "perf2.callPositions[0].pocPos should be 1");
+					Assert.areEqual(0, perf2.callPositions[0].pocLengths, "perf2.callPositions[0].pocLengths should be 0");
+					Assert.areEqual(1760, perf2.callPositions[1].pocDist, "perf2.callPositions[1].pocDist should be 1760");
+					Assert.areEqual(1, perf2.callPositions[1].pocPos, "perf2.callPositions[1].pocPos should be 1");
+					Assert.areEqual(0, perf2.callPositions[1].pocLengths, "perf2.callPositions[1].pocLengths should be 0");
+					Assert.areEqual(2640, perf2.callPositions[2].pocDist, "perf2.callPositions[2].pocDist should be 2640");
+					Assert.areEqual(1, perf2.callPositions[2].pocPos, "perf2.callPositions[2].pocPos should be 1");
+					Assert.areEqual(0, perf2.callPositions[2].pocLengths, "perf2.callPositions[2].pocLengths should be 0");
+					Assert.areEqual(3080, perf2.callPositions[3].pocDist, "perf2.callPositions[3].pocDist should be 3080");
+					Assert.areEqual(1, perf2.callPositions[3].pocPos, "perf2.callPositions[3].pocPos should be 1");
+					Assert.areEqual(0, perf2.callPositions[3].pocLengths, "perf2.callPositions[3].pocLengths should be 0");
+					Assert.areEqual(3300, perf2.callPositions[4].pocDist, "perf2.callPositions[4].pocDist should be 3300");
+					Assert.areEqual(1, perf2.callPositions[4].pocPos, "perf2.callPositions[4].pocPos should be 1");
+					Assert.areEqual(0, perf2.callPositions[4].pocLengths, "perf2.callPositions[4].pocLengths should be 0");
+					Assert.areEqual(3520, perf2.callPositions[5].pocDist, "perf2.callPositions[5].pocDist should be 3520");
+					Assert.areEqual(1, perf2.callPositions[5].pocPos, "perf2.callPositions[5].pocPos should be 1");
+					Assert.areEqual(0, perf2.callPositions[5].pocLengths, "perf2.callPositions[5].pocLengths should be 0");
+					Assert.areEqual(
+						races[0].distance.value, 
+						perf2.callPositions[5].pocDist, 
+						"perf2.callPositions[5].pocDist should be equal to perf2.distance.value"
+					);
+					
+					perf3 = performances[3];
+					
+					Assert.isBoolean(perf3.didNotFinish, "perf3.didNotFinish should be a Boolean");
+					Assert.areEqual(false, perf3.didNotFinish, "perf3.didNotFinish should be false");
+					
+					Assert.isString(perf3.jockeyName, "perf3.jockeyName should be a String");
+					Assert.areEqual("NICHOLS J E", perf3.jockeyName, "perf3.jockeyName should be 'NICHOLS J E'");
+					
+					Assert.isNumber(perf3.odds, "perf3.odds should be a Number");
+					Assert.areEqual(7.9, perf3.odds, "perf3.odds should be 7.9");
+					
+					Assert.isString(perf3.ownerName, "perf3.ownerName should be a String");
+					Assert.areEqual("ROMERO HOWARD", perf3.ownerName, "perf3.ownerName should be 'ROMERO HOWARD'");
+					
+					Assert.isString(perf3.trainerName, "perf3.trainerName should be a String");
+					Assert.areEqual("LEONARD GEORGE III", perf3.trainerName, "perf3.trainerName should be 'LEONARD GEORGE III'");
+					
+					perf4 = performances[4];			
+					
+					Assert.isString(perf4.lastRace.raceRunDate.year, "perf4.lastRace.raceRunDate.year should be a String");
+					Assert.areEqual("2000", perf4.lastRace.raceRunDate.year, "perf4.lastRace.raceRunDate.year should be '2000'");
+					
+					Assert.isString(perf4.lastRace.raceRunDate.month, "perf4.lastRace.raceRunDate.month should be a String");
+					Assert.areEqual("11", perf4.lastRace.raceRunDate.month, "perf4.lastRace.raceRunDate.month should be '11'");
+					
+					Assert.isString(perf4.lastRace.raceRunDate.day, "perf4.lastRace.raceRunDate.day should be a String");
+					Assert.areEqual("11", perf4.lastRace.raceRunDate.day, "perf4.lastRace.raceRunDate.day should be '11'");
+					
+					Assert.isNumber(perf4.lastRace.pp, "perf4.lastRace.pp should be a Number");
+					Assert.areEqual(2, perf4.lastRace.pp, "perf4.lastRace.pp should be 2");
+					
+					Assert.isNumber(perf4.lastRace.raceNumber, "perf4.lastRace.raceNumber should be a Number");
+					Assert.areEqual(5, perf4.lastRace.raceNumber, "perf4.lastRace.raceNumber should be 5");
+					
+					Assert.isNumber(perf4.lastRace.raceSession, "perf4.lastRace.raceSession should be a Number");
+					Assert.areEqual(0, perf4.lastRace.raceSession, "perf4.lastRace.raceSession should be 0");
+					
+					Assert.isString(perf4.lastRace.raceTrack, "perf4.lastRace.raceTrack should be a String");
+					Assert.areEqual("CD ", perf4.lastRace.raceTrack, "perf4.lastRace.raceTrack should be 'CD '");
+					
+					Assert.isFunction(perf4.getLastRaceDateCYMD, "perf4.getLastRaceDateCYMD should be a function");
+					Assert.isNumber(perf4.getLastRaceDateCYMD(), "perf4.getLastRaceDateCYMD() should return a Number");
+					Assert.areEqual(20001111, perf4.getLastRaceDateCYMD(), "perf4.getLastRaceDateCYMD() should return 20001111");
+					
+					perf5 = performances[5];
+					
+					Assert.isBoolean(perf5.blinkered, "perf5.blinkered should be a Boolean");
+					Assert.areEqual(false, perf5.blinkered, "perf5.blinkered should be false");
+					
+					Assert.isObject(perf5.medication, "perf5.medication should be an Object");
+					Assert.isNumber(perf5.medication.code, "perf5.medication.code should be a Number");
+					Assert.areEqual(1, perf5.medication.code, "perf5.medication.code should be 1");
+					Assert.isString(perf5.medication.desc, "perf5.medication.desc should be a String");
+					Assert.areEqual("Lasix", perf5.medication.desc, "perf5.medication.desc should be 'Lasix'");
+					
+				}
+	
+			});
+		
+			Y.thorobase.thorodata.test.ThoroDataSuite = new Y.Test.Suite("thoroData Suite");
+			Y.thorobase.thorodata.test.ThoroDataSuite.add(Y.thorobase.thorodata.test.BRISImportChartDataTestCase);
+		
+			// create the console
+			var runner = new Y.Console({
+				strings: {
+					title: "thoroData tests",
+					pause: "Pause",
+					clear: "Clear",
+					collapse: "Collapse"
+				},
+				width: '800px',
+				height: '600px',
+				newestOnTop: false,
+				style: 'block' // to anchor in the example content
+			});
+		
+			runner.render('#testLogger');
+		
+			Y.Test.Runner.add(Y.thorobase.thorodata.test.ThoroDataSuite);
+		
+			// run the tests
+			Y.Test.Runner.run();
+		
+		});
+		
+	</script> 
+
+	<!--END SOURCE CODE FOR EXAMPLE =============================== -->
+
+</body>
+</html>
