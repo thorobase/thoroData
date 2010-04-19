@@ -13,3 +13,9 @@ thorobase.thorodata.Race
 thorobase.thorodata.Performance
 
 thorobase.Equibase
+
+==============================
+Data Provider Implementations
+==============================
+BRIS
+	* Import Chart Data --> src/providers/brisImportChartData.js
